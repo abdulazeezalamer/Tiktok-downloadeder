@@ -81,13 +81,11 @@ footer{border-top:1px solid var(--line);padding:20px 24px;text-align:center;font
   <div class="logo" aria-hidden="true">🎬</div>
   <div><h1>TikDown <b>Pro</b></h1><p>تحميل فيديوهات تيك توك بدقة عالية</p></div>
 </header>
-
 <main>
   <section class="hero">
     <h2>حمّل فيديوهات تيك توك <span class="grad">بدون علامة مائية</span></h2>
     <p>ألصق رابط الفيديو، واختر الجودة المناسبة. يدعم الفيديو، والصوت MP3، وصور الألبومات.</p>
   </section>
-
   <section class="card box">
     <div class="row">
       <div class="field">
@@ -99,43 +97,27 @@ footer{border-top:1px solid var(--line);padding:20px 24px;text-align:center;font
       </div>
       <button class="go" id="go" type="button">تحميل الآن</button>
     </div>
-    <div class="err" id="error" role="alert" hidden>
-      <span id="errorText"></span>
+    <div class="err" id="error" role="alert" hidden><span id="errorText"></span>
       <div class="alts" id="alts" hidden>جرّب موقعاً بديلاً: <a id="alt1" target="_blank" rel="noopener noreferrer">SnapTik</a><a id="alt2" target="_blank" rel="noopener noreferrer">SSSTik</a></div>
     </div>
   </section>
-
-  <section class="loading" id="loading" hidden aria-live="polite">
-    <div class="spin"></div><b>جارِ جلب تفاصيل الفيديو…</b>
-  </section>
-
+  <section class="loading" id="loading" hidden aria-live="polite"><div class="spin"></div><b id="loadText">جارِ جلب تفاصيل الفيديو…</b></section>
   <section class="card res" id="result" hidden>
     <div class="thumb"><img id="thumb" alt="صورة الفيديو" referrerpolicy="no-referrer"></div>
     <div>
       <div class="who"><img id="avatar" alt="" referrerpolicy="no-referrer"><div><b id="aname"></b><span id="aid"></span></div></div>
-      <p class="desc" id="desc"></p>
-      <p class="stats" id="stats"></p>
-      <div id="photos" class="photos" hidden></div>
-      <div id="dl"></div>
+      <p class="desc" id="desc"></p><p class="stats" id="stats"></p>
+      <div id="photos" class="photos" hidden></div><div id="dl"></div>
     </div>
   </section>
-
-  <section class="hist" id="hist" hidden>
-    <h3><span>آخر الروابط</span><button class="mini" id="histClear" type="button">مسح السجل</button></h3>
-    <div id="histList"></div>
-  </section>
-
+  <section class="hist" id="hist" hidden><h3><span>آخر الروابط</span><button class="mini" id="histClear" type="button">مسح السجل</button></h3><div id="histList"></div></section>
   <section class="feat">
     <div class="card"><span>⚡</span><h4>سريع وبسيط</h4><p>ألصق الرابط واحصل على خيارات التحميل خلال ثوانٍ.</p></div>
     <div class="card"><span>🛡️</span><h4>بدون علامة مائية</h4><p>نسخة نظيفة من الفيديو بجودة HD عند توفرها.</p></div>
     <div class="card"><span>📱</span><h4>يعمل على كل الأجهزة</h4><p>هاتف أو حاسوب، دون تثبيت أي برنامج.</p></div>
   </section>
 </main>
-
-<footer>
-  <p>© 2026 TikDown Pro. أداة مستقلة وغير تابعة لتيك توك. استخدمها للحفظ الشخصي فقط، واحترم حقوق أصحاب المحتوى.</p>
-</footer>
-
+<footer><p>© 2026 TikDown Pro. أداة مستقلة وغير تابعة لتيك توك. استخدمها للحفظ الشخصي فقط، واحترم حقوق أصحاب المحتوى.</p></footer>
 <script>
 (() => {
 'use strict';
@@ -143,27 +125,18 @@ const $ = id => document.getElementById(id);
 const API = 'https://www.tikwm.com/api/', HOST = 'https://www.tikwm.com', KEY = 'tikdown_history';
 const input = $('url'), goBtn = $('go');
 let busy = false, errTimer;
-
 const abs = u => !u ? '' : /^https?:/.test(u) ? u : u.startsWith('//') ? 'https:' + u : HOST + (u[0] === '/' ? '' : '/') + u;
 const fmt = n => new Intl.NumberFormat('ar', { notation: 'compact' }).format(n || 0);
 const extract = t => (String(t).match(/https?:\/\/[^\s"'<>]+/) || [])[0] || String(t).trim();
 const isTikTok = u => { try { const h = new URL(u).hostname.toLowerCase(); return h === 'tiktok.com' || h.endsWith('.tiktok.com'); } catch { return false; } };
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-
-function toast(msg) {
-  const t = el('div', 'toast', msg); t.setAttribute('role', 'status'); document.body.append(t);
-  setTimeout(() => t.remove(), 3500);
-}
+function toast(msg) { const t = el('div', 'toast', msg); t.setAttribute('role', 'status'); document.body.append(t); setTimeout(() => t.remove(), 3500); }
 function hideError() { clearTimeout(errTimer); $('error').hidden = true; $('alts').hidden = true; }
 function showError(msg, url) {
   hideError(); $('errorText').textContent = msg; $('error').hidden = false;
-  if (url) {
-    $('alt1').href = 'https://snaptik.app/en?url=' + encodeURIComponent(url);
-    $('alt2').href = 'https://ssstik.io/en?url=' + encodeURIComponent(url);
-    $('alts').hidden = false;
-  } else errTimer = setTimeout(hideError, 8000);
+  if (url) { $('alt1').href = 'https://snaptik.app/en?url=' + encodeURIComponent(url); $('alt2').href = 'https://ssstik.io/en?url=' + encodeURIComponent(url); $('alts').hidden = false; }
+  else errTimer = setTimeout(hideError, 8000);
 }
-
 async function fetchInfo(url, retry = true) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000);
   try {
@@ -174,93 +147,62 @@ async function fetchInfo(url, retry = true) {
     const e = new Error(d.msg || 'api'); e.api = true; throw e;
   } finally { clearTimeout(t); }
 }
-
-async function save(url, name, btn) {
-  const label = btn.querySelector('small'), old = label ? label.textContent : '';
-  btn.classList.add('busy'); if (label) label.textContent = 'جارِ التحميل…';
+async function save(url, name, btn, autoYas = false) {
+  const label = btn ? btn.querySelector('small') : null, old = label ? label.textContent : '';
+  if (btn) btn.classList.add('busy');
+  if (label) label.textContent = 'جارِ التنزيل للاستوديو…';
+  if (autoYas) $('loadText').textContent = 'جارِ تنزيل الفيديو تلقائياً...';
   try {
     const r = await fetch(url); if (!r.ok) throw new Error('http');
-    const a = el('a'); a.href = URL.createObjectURL(await r.blob()); a.download = name;
+    const blob = await r.blob();
+    const a = el('a'); a.href = URL.createObjectURL(blob); a.download = name;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  } catch {
-    window.open(url, '_blank', 'noopener');
-    toast('تعذّر التحميل المباشر، فُتح الملف في تبويب جديد. احفظه من هناك.');
-  } finally { btn.classList.remove('busy'); if (label) label.textContent = old; }
+    if (autoYas) toast('تم بدء التنزيل بنجاح! راجع التنزيلات أو الاستوديو.');
+  } catch { window.open(url, '_blank', 'noopener'); toast('فشل التنزيل المباشر، فُتح الملف في تبويب جديد.'); }
+  finally { if (btn) btn.classList.remove('busy'); if (label) label.textContent = old; $('loading').hidden = true; }
 }
-
-function render(d) {
+function render(d, isAuto = false) {
   const id = d.id || Date.now(), imgs = Array.isArray(d.images) ? d.images : [];
-  $('thumb').src = abs(d.cover || d.origin_cover);
-  $('avatar').src = abs(d.author && d.author.avatar);
+  $('thumb').src = abs(d.cover || d.origin_cover); $('avatar').src = abs(d.author && d.author.avatar);
   $('aname').textContent = (d.author && d.author.nickname) || 'مستخدم تيك توك';
   $('aid').textContent = '@' + ((d.author && d.author.unique_id) || 'tiktok');
   $('desc').textContent = d.title || 'بدون وصف';
   $('stats').textContent = [`▶ ${fmt(d.play_count)}`, `❤ ${fmt(d.digg_count)}`, `💬 ${fmt(d.comment_count)}`, d.duration ? `⏱ ${d.duration} ث` : ''].filter(Boolean).join('   ');
-
-  const items = [];
+  const items = []; let mainUrl = '', mainName = '';
   if (!imgs.length) {
-    if (d.hdplay) items.push({ main: 1, ico: '🎬', t: 'بدون علامة مائية (HD)', s: 'أعلى جودة متوفرة', u: d.hdplay, f: `tiktok_${id}_hd.mp4` });
-    if (d.play) items.push({ main: !d.hdplay, ico: '📹', t: 'بدون علامة مائية', s: 'الجودة القياسية', u: d.play, f: `tiktok_${id}.mp4` });
+    if (d.hdplay) { items.push({ main: 1, ico: '🎬', t: 'بدون علامة مائية (HD)', s: 'أعلى جودة متوفرة', u: d.hdplay, f: `tiktok_${id}_hd.mp4` }); mainUrl = d.hdplay; mainName = `tiktok_${id}_hd.mp4`; }
+    else if (d.play) { items.push({ main: 1, ico: '📹', t: 'بدون علامة مائية', s: 'الجودة القياسية', u: d.play, f: `tiktok_${id}.mp4` }); mainUrl = d.play; mainName = `tiktok_${id}.mp4`; }
     if (d.wmplay) items.push({ ico: '🎞️', t: 'بالعلامة المائية', s: 'النسخة الأصلية', u: d.wmplay, f: `tiktok_${id}_wm.mp4` });
   }
   if (d.music) items.push({ ico: '🎵', t: 'الصوت فقط (MP3)', s: 'استخراج الصوت', u: d.music, f: `tiktok_${id}.mp3` });
-
   const list = $('dl'), ph = $('photos'); list.replaceChildren(); ph.replaceChildren(); ph.hidden = !imgs.length;
-  imgs.forEach((u, i) => {
-    const b = el('button'), im = el('img'); b.type = 'button'; b.title = `تحميل الصورة ${i + 1}`;
-    im.src = abs(u); im.alt = `صورة ${i + 1}`; im.loading = 'lazy'; im.referrerPolicy = 'no-referrer'; b.append(im);
-    b.onclick = () => save(abs(u), `tiktok_${id}_${i + 1}.jpg`, b); ph.append(b);
-  });
-  items.forEach(it => {
-    const b = el('button', 'dl' + (it.main ? ' main' : '')), tx = el('span'); b.type = 'button';
-    tx.append(el('b', '', it.t), el('small', '', it.s)); b.append(el('i', '', it.ico), tx);
-    b.onclick = () => save(abs(it.u), it.f, b); list.append(b);
-  });
+  imgs.forEach((u, i) => { const b = el('button'), im = el('img'); b.type = 'button'; b.title = `تحميل الصورة ${i + 1}`; im.src = abs(u); im.alt = `صورة ${i + 1}`; im.loading = 'lazy'; im.referrerPolicy = 'no-referrer'; b.append(im); b.onclick = () => save(abs(u), `tiktok_${id}_${i + 1}.jpg`, b); ph.append(b); });
+  items.forEach(it => { const b = el('button', 'dl' + (it.main ? ' main' : '')), tx = el('span'); b.type = 'button'; tx.append(el('b', '', it.t), el('small', '', it.s)); b.append(el('i', '', it.ico), tx); b.onclick = () => save(abs(it.u), it.f, b); list.append(b); });
   if (!items.length && !imgs.length) throw Object.assign(new Error('empty'), { api: true });
   $('result').hidden = false;
-  if ($('result').scrollIntoView) $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (isAuto && mainUrl) save(abs(mainUrl), mainName, null, true);
 }
-
 const loadHist = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
-function addHist(u, t) {
-  try { localStorage.setItem(KEY, JSON.stringify([{ u, t: (t || u).slice(0, 60) }, ...loadHist().filter(x => x.u !== u)].slice(0, 5))); } catch {}
-  drawHist();
-}
-function drawHist() {
-  const h = loadHist(), box = $('histList'); box.replaceChildren(); $('hist').hidden = !h.length;
-  h.forEach(x => { const b = el('button', 'item', x.t); b.type = 'button'; b.title = x.u; b.onclick = () => { input.value = x.u; sync(); start(); }; box.append(b); });
-}
-
-async function start() {
+function addHist(u, t) { try { localStorage.setItem(KEY, JSON.stringify([{ u, t: (t || u).slice(0, 60) }, ...loadHist().filter(x => x.u !== u)].slice(0, 5))); } catch {} drawHist(); }
+function drawHist() { const h = loadHist(), box = $('histList'); box.replaceChildren(); $('hist').hidden = !h.length; h.forEach(x => { const b = el('button', 'item', x.t); b.type = 'button'; b.title = x.u; b.onclick = () => { input.value = x.u; sync(); start(); }; box.append(b); }); }
+async function start(isAuto = false) {
   if (busy) return;
-  const url = extract(input.value);
-  hideError(); $('result').hidden = true;
+  const url = extract(input.value); hideError(); $('result').hidden = true;
   if (!url) return showError('ألصق رابط فيديو تيك توك أولاً.');
   if (!isTikTok(url)) return showError('هذا ليس رابط تيك توك. مثال: https://www.tiktok.com/@user/video/123 أو https://vm.tiktok.com/xxxx');
-  input.value = url; sync();
-  busy = true; goBtn.disabled = true; $('loading').hidden = false;
-  try { const d = await fetchInfo(url); render(d); addHist(url, d.title); }
-  catch (e) {
-    showError(e.name === 'AbortError' ? 'انتهت مهلة الاتصال. حاول مرة ثانية.'
-      : e.api ? 'تعذّر جلب الفيديو. تأكد أن الرابط عام وغير محذوف، ثم حاول مجدداً.'
-      : 'تعذّر الاتصال بالخدمة. تحقق من الإنترنت، أو قد تكون الخدمة متوقفة مؤقتاً.', url);
-  } finally { busy = false; goBtn.disabled = false; $('loading').hidden = true; }
+  input.value = url; sync(); busy = true; goBtn.disabled = true; $('loading').hidden = false; $('loadText').textContent = 'جارِ جلب تفاصيل الفيديو…';
+  try { const d = await fetchInfo(url); render(d, isAuto); addHist(url, d.title); }
+  catch (e) { $('loading').hidden = true; showError(e.name === 'AbortError' ? 'انتهت مهلة الاتصال. حاول مرة ثانية.' : e.api ? 'تعذّر جلب الفيديو. تأكد أن الرابط عام وغير محذوف، ثم حاول مجدداً.' : 'تعذّر الاتصال بالخدمة. تحقق من الإنترنت، أو قد تكون الخدمة متوقفة مؤقتاً.', url); }
+  finally { busy = false; goBtn.disabled = false; }
 }
-
 const sync = () => { $('clear').hidden = !input.value; };
-$('paste').onclick = async () => {
-  try { input.value = await navigator.clipboard.readText(); sync(); if (isTikTok(extract(input.value))) start(); }
-  catch { input.focus(); showError('المتصفح منع الوصول للحافظة. الصق الرابط يدوياً (Ctrl+V).'); }
-};
+$('paste').onclick = async () => { try { input.value = await navigator.clipboard.readText(); sync(); if (isTikTok(extract(input.value))) start(); } catch { input.focus(); showError('المتصفح منع الوصول للحافظة. الصق الرابط يدوياً (Ctrl+V).'); } };
 $('clear').onclick = () => { input.value = ''; sync(); hideError(); $('result').hidden = true; input.focus(); };
 $('histClear').onclick = () => { try { localStorage.removeItem(KEY); } catch {} drawHist(); };
-goBtn.onclick = start;
-input.addEventListener('input', sync);
-input.addEventListener('keydown', e => { if (e.key === 'Enter') start(); });
-
+goBtn.onclick = () => start(false); input.addEventListener('input', sync); input.addEventListener('keydown', e => { if (e.key === 'Enter') start(false); });
 drawHist();
 const q = new URLSearchParams(location.search).get('url');
-if (q) { input.value = q; sync(); start(); }
+if (q) { input.value = q; sync(); start(true); }
 })();
 </script>
 </body>
